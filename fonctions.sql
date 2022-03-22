@@ -14,7 +14,6 @@ $$
 $$ 
 LANGUAGE plpgsql;
 
-drop function nb_occurence;
 create or replace function nb_occurence(caractere varchar,chaine varchar,debut int,fin int) returns integer as
 $$
     DECLARE
@@ -30,6 +29,53 @@ $$
             i = i + 1;
         end loop;
         return nb_occurences;
+    else
+        RAISE INFO 'le debut et la fin doivent etre compris entre 0 et %',length(chaine);
+    end if;
+    END;
+
+$$
+
+LANGUAGE plpgsql;
+
+create or replace function nb_occurenceLoop(caractere varchar, chaine varchar,debut int,fin int) returns integer as
+$$
+    DECLARE
+        nb_occurence integer = 0;
+        i integer = 0;
+    BEGIN
+    if debut >= 0 and fin <= length(chaine) and fin > 0 then
+        loop
+            exit when i = fin;
+            if substr(left(chaine,i),i) = caractere then
+                nb_occurence = nb_occurence + 1;
+            end if ;
+            i = i + 1;
+        end loop;
+        return nb_occurence;
+    else
+        RAISE INFO 'le debut et la fin doivent etre compris entre 0 et %',length(chaine);
+    end if;
+    END;
+
+$$
+
+LANGUAGE plpgsql;
+
+create or replace function nb_occurenceWhile(caractere varchar, chaine varchar,debut int,fin int) returns integer as
+$$
+    DECLARE
+        nb_occurence integer = 0;
+        i integer = 0;
+    BEGIN
+    if debut >= 0 and fin <= length(chaine) and fin > 0 then
+        while i != fin loop
+            if substr(left(chaine,i),i) = caractere then
+                nb_occurence = nb_occurence + 1;
+            end if ;
+            i = i + 1;
+        end loop;
+        return nb_occurence;
     else
         RAISE INFO 'le debut et la fin doivent etre compris entre 0 et %',length(chaine);
     end if;
